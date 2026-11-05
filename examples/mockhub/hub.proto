@@ -1,0 +1,59 @@
+// Schema for `mockhub -format=protobuf` (and for examples/hubs.js FORMAT=protobuf).
+//
+// Field names are the JSON keys of the plain-JSON mode on purpose: the same
+// jsonPath works whether the hub speaks json, msgpack or protobuf.
+syntax = "proto3";
+package mockhub;
+
+// Every message, both directions.
+message Envelope {
+  string type = 1;              // welcome | ack | ping | pong | event
+  string op = 2;                // client -> server: subscribe
+  string hub = 3;
+  string conn = 4;
+  repeated string topics = 5;
+  optional int32 code = 6;      // optional: a code of 0 is still sent
+  int32 n = 7;
+  string topic = 8;
+  string event = 9;
+  string msgId = 10;
+  int64 seq = 11;               // 64-bit: a string in the JSON view
+  Data data = 12;
+  string ts = 13;
+}
+
+// One shape for every hub; proto3 leaves out what a hub does not set.
+message Data {
+  // orders
+  string orderId = 1;
+  Customer customer = 2;
+  repeated Item items = 3;
+  double total = 4;
+  string currency = 5;
+  string status = 6;
+  // prices
+  string symbol = 10;
+  double bid = 11;
+  double ask = 12;
+  repeated Level levels = 13;
+  // alerts
+  string level = 20;
+  string text = 21;
+  repeated string tags = 22;
+}
+
+message Customer {
+  string id = 1;
+  string tier = 2;
+}
+
+message Item {
+  string sku = 1;
+  int32 qty = 2;
+  double price = 3;
+}
+
+message Level {
+  double px = 1;
+  int32 qty = 2;
+}
